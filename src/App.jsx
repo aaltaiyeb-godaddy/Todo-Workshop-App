@@ -1,8 +1,7 @@
-// Stage 05: Events — Toggle Complete & Delete
-// Two new handlers: handleToggle and handleDelete.
-// Both demonstrate immutable state updates — we never modify the existing array.
-//   - handleToggle uses .map() to flip one task's completed field
-//   - handleDelete uses .filter() to return all tasks except the deleted one
+// Stage 06: Filtering
+// We compute filteredTasks as derived data — a value calculated from state
+// during render. We do NOT store it in useState; we just compute it fresh
+// every time App re-renders. This keeps the state minimal.
 
 import { useState } from 'react'
 import Sidebar from './components/Sidebar'
@@ -26,28 +25,42 @@ function App() {
   }
 
   function handleToggle(id) {
-    // Map returns a NEW array. For the matching task, we spread its fields
-    // and flip `completed`. All other tasks pass through unchanged.
     setTasks(tasks.map(task =>
       task.id === id ? { ...task, completed: !task.completed } : task
     ))
   }
 
   function handleDelete(id) {
-    // Filter returns a NEW array containing only tasks that don't match the id
     setTasks(tasks.filter(task => task.id !== id))
   }
 
+  // Derived data: filter tasks based on the selected sidebar filter.
+  // This runs on every render — no extra state needed.
+  const filteredTasks = tasks.filter(task => {
+    if (selectedFilter === 'all')       return true
+    if (selectedFilter === 'active')    return !task.completed
+    if (selectedFilter === 'completed') return task.completed
+    if (selectedFilter === 'high')      return task.priority === 3
+    if (selectedFilter === 'medium')    return task.priority === 2
+    if (selectedFilter === 'low')       return task.priority === 1
+    return true
+  })
+
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <Sidebar />
+      {/* Pass selectedFilter and the setter so Sidebar can update it */}
+      <Sidebar
+        selectedFilter={selectedFilter}
+        onFilterChange={setSelectedFilter}
+      />
 
       <main className="flex-1 p-8 max-w-2xl">
         <h1 className="text-3xl font-bold text-gray-800 mb-6">
           Priority Task Manager
         </h1>
         <TaskForm onAddTask={handleAddTask} />
-        <TaskList tasks={tasks} onToggle={handleToggle} onDelete={handleDelete} />
+        {/* Pass filteredTasks instead of the raw tasks array */}
+        <TaskList tasks={filteredTasks} onToggle={handleToggle} onDelete={handleDelete} />
       </main>
     </div>
   )
