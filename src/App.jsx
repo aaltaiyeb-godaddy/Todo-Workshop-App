@@ -1,7 +1,7 @@
-// Stage 03: State
-// We move tasks and selectedFilter into useState.
-// The app still looks the same as stage-02 — the change is internal.
-// This is the foundation for all the interactive features we add next.
+// Stage 04: Add Task Form
+// App now has a handleAddTask function that it passes to TaskForm.
+// When the form submits, it calls this function with the new task object.
+// We use the spread operator to create a new array — never mutate state directly.
 
 import { useState } from 'react'
 import Sidebar from './components/Sidebar'
@@ -17,14 +17,13 @@ const SAMPLE_TASKS = [
 ]
 
 function App() {
-  // useState returns [currentValue, setterFunction].
-  // Calling the setter triggers a re-render with the new value.
   const [tasks, setTasks] = useState(SAMPLE_TASKS)
   const [selectedFilter, setSelectedFilter] = useState('all')
 
-  // setTasks and setSelectedFilter are not yet used — we add that next.
-  // For now, just note that the state exists and is ready to be wired up.
-  console.log('Current filter:', selectedFilter)
+  function handleAddTask(newTask) {
+    // [...tasks, newTask] creates a brand new array — this is immutable state update
+    setTasks([...tasks, newTask])
+  }
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -34,7 +33,8 @@ function App() {
         <h1 className="text-3xl font-bold text-gray-800 mb-6">
           Priority Task Manager
         </h1>
-        <TaskForm />
+        {/* Pass the handler down as a prop */}
+        <TaskForm onAddTask={handleAddTask} />
         <TaskList tasks={tasks} />
       </main>
     </div>
