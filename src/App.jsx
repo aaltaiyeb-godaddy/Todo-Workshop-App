@@ -1,7 +1,8 @@
-// Stage 06: Filtering
-// We compute filteredTasks as derived data — a value calculated from state
-// during render. We do NOT store it in useState; we just compute it fresh
-// every time App re-renders. This keeps the state minimal.
+// Stage 07: Sorting with Derived Data
+// We chain filteredTasks through a sort step to get sortedTasks.
+// The spread [...filteredTasks] creates a copy before sorting —
+// Array.sort() mutates in place, so we must copy first to stay immutable.
+// Sort rule: High priority first (3 → 2 → 1), then A-Z by title.
 
 import { useState } from 'react'
 import Sidebar from './components/Sidebar'
@@ -34,8 +35,7 @@ function App() {
     setTasks(tasks.filter(task => task.id !== id))
   }
 
-  // Derived data: filter tasks based on the selected sidebar filter.
-  // This runs on every render — no extra state needed.
+  // Step 1: filter
   const filteredTasks = tasks.filter(task => {
     if (selectedFilter === 'all')       return true
     if (selectedFilter === 'active')    return !task.completed
@@ -46,9 +46,16 @@ function App() {
     return true
   })
 
+  // Step 2: sort (on a copy — do not mutate filteredTasks)
+  const sortedTasks = [...filteredTasks].sort((a, b) => {
+    // Primary sort: higher priority number comes first
+    if (b.priority !== a.priority) return b.priority - a.priority
+    // Secondary sort: alphabetical by title
+    return a.title.localeCompare(b.title)
+  })
+
   return (
     <div className="flex min-h-screen bg-gray-50">
-      {/* Pass selectedFilter and the setter so Sidebar can update it */}
       <Sidebar
         selectedFilter={selectedFilter}
         onFilterChange={setSelectedFilter}
@@ -59,8 +66,7 @@ function App() {
           Priority Task Manager
         </h1>
         <TaskForm onAddTask={handleAddTask} />
-        {/* Pass filteredTasks instead of the raw tasks array */}
-        <TaskList tasks={filteredTasks} onToggle={handleToggle} onDelete={handleDelete} />
+        <TaskList tasks={sortedTasks} onToggle={handleToggle} onDelete={handleDelete} />
       </main>
     </div>
   )
