@@ -100,8 +100,8 @@ This document is for instructors and TAs. It contains live-coding order, talking
 
 - Ask: *When would you extract something into its own component?* (When you use the same markup in more than one place, or when a piece of markup has its own clear purpose/responsibility.)
 - `PriorityBadge` is a good example of a small **presentational component** — it only renders, it has no state, it just takes props and returns JSX.
-- Show the conditional rendering pattern: `if (tasks.length === 0) return <EmptyState />`.
 - Show the `counts` object — another piece of derived data. Ask: *Could we put counts in state?* (Yes, but then we'd have to update it everywhere we update `tasks`. Deriving it is simpler and less error-prone.)
+- Point to the active task count in the App header — a simple one-liner derived value showing how derived data can drive any part of the UI.
 
 ---
 
