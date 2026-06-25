@@ -1,15 +1,17 @@
-// Stage 02: Props
-// TaskList now receives a `tasks` array from App via props.
-// It maps over the array and renders one TaskItem per task.
-// Notice the `key` prop — React needs it to track list items efficiently.
+// Stage 05: Pass event handlers through TaskList to TaskItem
 
 import TaskItem from './TaskItem'
 
-function TaskList({ tasks }) {
+function TaskList({ tasks, onToggle, onDelete }) {
   return (
     <ul className="space-y-2">
       {tasks.map(task => (
-        <TaskItem key={task.id} task={task} />
+        <TaskItem
+          key={task.id}
+          task={task}
+          onToggle={onToggle}
+          onDelete={onDelete}
+        />
       ))}
     </ul>
   )

@@ -1,7 +1,8 @@
-// Stage 04: Add Task Form
-// App now has a handleAddTask function that it passes to TaskForm.
-// When the form submits, it calls this function with the new task object.
-// We use the spread operator to create a new array — never mutate state directly.
+// Stage 05: Events — Toggle Complete & Delete
+// Two new handlers: handleToggle and handleDelete.
+// Both demonstrate immutable state updates — we never modify the existing array.
+//   - handleToggle uses .map() to flip one task's completed field
+//   - handleDelete uses .filter() to return all tasks except the deleted one
 
 import { useState } from 'react'
 import Sidebar from './components/Sidebar'
@@ -21,8 +22,20 @@ function App() {
   const [selectedFilter, setSelectedFilter] = useState('all')
 
   function handleAddTask(newTask) {
-    // [...tasks, newTask] creates a brand new array — this is immutable state update
     setTasks([...tasks, newTask])
+  }
+
+  function handleToggle(id) {
+    // Map returns a NEW array. For the matching task, we spread its fields
+    // and flip `completed`. All other tasks pass through unchanged.
+    setTasks(tasks.map(task =>
+      task.id === id ? { ...task, completed: !task.completed } : task
+    ))
+  }
+
+  function handleDelete(id) {
+    // Filter returns a NEW array containing only tasks that don't match the id
+    setTasks(tasks.filter(task => task.id !== id))
   }
 
   return (
@@ -33,9 +46,8 @@ function App() {
         <h1 className="text-3xl font-bold text-gray-800 mb-6">
           Priority Task Manager
         </h1>
-        {/* Pass the handler down as a prop */}
         <TaskForm onAddTask={handleAddTask} />
-        <TaskList tasks={tasks} />
+        <TaskList tasks={tasks} onToggle={handleToggle} onDelete={handleDelete} />
       </main>
     </div>
   )
