@@ -1,14 +1,13 @@
-// Stage 02: Props
-// We define a SAMPLE_TASKS array here in App and pass it down to TaskList.
-// TaskList passes each task to a TaskItem.
-// This teaches how data flows from parent to child via props.
+// Stage 03: State
+// We move tasks and selectedFilter into useState.
+// The app still looks the same as stage-02 — the change is internal.
+// This is the foundation for all the interactive features we add next.
 
+import { useState } from 'react'
 import Sidebar from './components/Sidebar'
 import TaskForm from './components/TaskForm'
 import TaskList from './components/TaskList'
 
-// Priority numeric values map to human-readable labels.
-// 1 = Low, 2 = Medium, 3 = High
 const SAMPLE_TASKS = [
   { id: '1', title: 'Set up project structure', priority: 3, completed: true },
   { id: '2', title: 'Build TaskItem component', priority: 3, completed: false },
@@ -18,6 +17,15 @@ const SAMPLE_TASKS = [
 ]
 
 function App() {
+  // useState returns [currentValue, setterFunction].
+  // Calling the setter triggers a re-render with the new value.
+  const [tasks, setTasks] = useState(SAMPLE_TASKS)
+  const [selectedFilter, setSelectedFilter] = useState('all')
+
+  // setTasks and setSelectedFilter are not yet used — we add that next.
+  // For now, just note that the state exists and is ready to be wired up.
+  console.log('Current filter:', selectedFilter)
+
   return (
     <div className="flex min-h-screen bg-gray-50">
       <Sidebar />
@@ -27,8 +35,7 @@ function App() {
           Priority Task Manager
         </h1>
         <TaskForm />
-        {/* Pass the tasks array down as a prop */}
-        <TaskList tasks={SAMPLE_TASKS} />
+        <TaskList tasks={tasks} />
       </main>
     </div>
   )
